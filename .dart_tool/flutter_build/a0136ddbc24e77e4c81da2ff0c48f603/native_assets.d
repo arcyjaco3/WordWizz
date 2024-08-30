@@ -1,0 +1,1 @@
+ C:\\Users\\Daniel\\Desktop\\wsei\\2024\\projekt\\WordWizz\\.dart_tool\\flutter_build\\a0136ddbc24e77e4c81da2ff0c48f603\\native_assets.yaml: 
