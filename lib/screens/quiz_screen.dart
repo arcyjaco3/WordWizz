@@ -4,7 +4,7 @@ import 'package:wordwizz/models/quiz_model.dart';
 class QuizScreen extends StatelessWidget {
   final Quiz quiz;
 
-  QuizScreen({Key? key, required this.quiz}) : super(key: key);
+  const QuizScreen({super.key, required this.quiz});
 
   @override
   Widget build(BuildContext context) {

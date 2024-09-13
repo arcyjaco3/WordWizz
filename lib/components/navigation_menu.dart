@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wordwizz/screens/settings_screen.dart';
 import 'package:wordwizz/screens/course_screen.dart';
-import 'package:wordwizz/screens/quiz_level_screen.dart'; // Dodaj ten import
+import 'package:wordwizz/screens/quiz_level_screen.dart'; 
 
 class BottomNavigationBarScreen extends StatefulWidget {
   const BottomNavigationBarScreen({super.key});
@@ -16,8 +16,8 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
   static final List<Widget> _widgetOptions = <Widget>[
     const Text('Home Screen'),
     CourseListScreen(),
-    QuizLevelsScreen(), // Upewnij się, że ta klasa jest poprawnie zdefiniowana
-    SettingsScreen(),
+    QuizLevelsScreen(), 
+    const SettingsScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -28,6 +28,9 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    final isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),
@@ -52,8 +55,11 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
+        selectedItemColor: Colors.amber[800], 
+        unselectedItemColor: isDarkMode ? Colors.white : Colors.black, 
         onTap: _onItemTapped,
+        backgroundColor: isDarkMode ? Colors.black : Colors.white, 
+        type: BottomNavigationBarType.fixed, 
       ),
     );
   }

@@ -57,7 +57,7 @@ class CourseListScreen extends StatelessWidget {
 class CourseDetailScreen extends StatelessWidget {
   final Course course;
 
-  CourseDetailScreen({required this.course});
+  const CourseDetailScreen({super.key, required this.course});
 
   @override
   Widget build(BuildContext context) {
