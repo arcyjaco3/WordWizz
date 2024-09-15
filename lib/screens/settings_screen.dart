@@ -14,15 +14,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
   double _fontSize = 16.0;
   bool _notificationsEnabled = true;
 
-  // Mapa do przypisania rozmiarów czcionek
   final Map<String, double> fontSizeMap = {
     'small': 12.0,
     'medium': 16.0,
     'large': 20.0,
   };
 
-  // Zmienna do wyboru opcji rozmiaru czcionki
-  String _selectedFontSize = 'medium'; // Domyślnie medium
+
+  String _selectedFontSize = 'medium'; 
 
   @override
   Widget build(BuildContext context) {
