@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/theme_provider.dart';
+import '../providers/font_size_provider.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -11,8 +12,7 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   String _selectedLanguage = 'Polski';
-  double _fontSize = 16.0;
-  bool _notificationsEnabled = true;
+  String _selectedFontSize = 'medium'; 
 
   final Map<String, double> fontSizeMap = {
     'small': 12.0,
@@ -20,16 +20,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
     'large': 20.0,
   };
 
-
-  String _selectedFontSize = 'medium'; 
-
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
+    final fontSizeProvider = Provider.of<FontSizeProvider>(context); // Poprawne uzyskanie instancji
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Ustawienia'),
+        title: Text(
+          'Ustawienia',
+          style: TextStyle(fontSize: fontSizeProvider.fontSize), // Dynamiczny rozmiar tytułu
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -49,15 +50,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 items: const [
                   DropdownMenuItem(
                     value: ThemeMode.system,
-                    child: Text('Systemowy'),
+                    child: Text('Systemowy'
+                    ), // Brak dynamicznej czcionki tutaj
                   ),
                   DropdownMenuItem(
                     value: ThemeMode.light,
-                    child: Text('Jasny'),
+                    child: Text('Jasny'), // Brak dynamicznej czcionki tutaj
                   ),
                   DropdownMenuItem(
                     value: ThemeMode.dark,
-                    child: Text('Ciemny'),
+                    child: Text('Ciemny'), // Brak dynamicznej czcionki tutaj
                   ),
                 ],
               ),
@@ -91,7 +93,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 onChanged: (String? newValue) {
                   setState(() {
                     _selectedFontSize = newValue!;
-                    _fontSize = fontSizeMap[_selectedFontSize]!; // Przypisanie wartości z mapy
+                    fontSizeProvider.setFontSize(fontSizeMap[_selectedFontSize]!); // Aktualizacja FontSizeProvider
                   });
                 },
                 items: fontSizeMap.keys
@@ -108,12 +110,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ListTile(
               title: const Text('Powiadomienia'),
               trailing: Switch(
-                value: _notificationsEnabled,
-                onChanged: (bool value) {
-                  setState(() {
-                    _notificationsEnabled = value;
-                  });
-                },
+                value: true,
+                onChanged: (bool value) {},
               ),
             ),
           ],
