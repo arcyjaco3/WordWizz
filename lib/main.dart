@@ -4,6 +4,9 @@ import 'providers/theme_provider.dart';
 import 'providers/font_size_provider.dart';
 import 'package:wordwizz/components/navigation_menu.dart';
 
+
+import 'screens/welcome_screen.dart';
+
 void main() {
   runApp(
     MultiProvider(
@@ -28,7 +31,8 @@ class MyApp extends StatelessWidget {
       themeMode: themeProvider.themeMode,
       theme: ThemeData.light(),
       darkTheme: ThemeData.dark(),
-      home: const BottomNavigationBarScreen(),
+      // home: const BottomNavigationBarScreen(),
+      home :  WelcomeScreen()
     );
   }
 }

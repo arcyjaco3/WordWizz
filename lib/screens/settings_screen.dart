@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:wordwizz/providers/language_provider.dart';
 import '../providers/theme_provider.dart';
 import '../providers/font_size_provider.dart';
 
@@ -11,7 +12,7 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  String _selectedLanguage = 'Polski';
+  String _selectedLanguage = 'English';
   String _selectedFontSize = 'medium'; 
 
   final Map<String, double> fontSizeMap = {
@@ -23,7 +24,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
-    final fontSizeProvider = Provider.of<FontSizeProvider>(context); // Poprawne uzyskanie instancji
+    final fontSizeProvider = Provider.of<FontSizeProvider>(context);
+ // Poprawne uzyskanie instancji
 
     return Scaffold(
       appBar: AppBar(
