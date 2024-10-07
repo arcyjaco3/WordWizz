@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:wordwizz/models/quiz_model.dart';
-import 'package:wordwizz/screens/quiz_screen.dart'; // Upewnij się, że importujesz odpowiednią ścieżkę do QuizScreen
+import 'package:wordwizz/screens/quiz_screen.dart';
+import '../providers/font_size_provider.dart';
 
 class QuizLevelsScreen extends StatelessWidget {
   QuizLevelsScreen({super.key});
@@ -12,28 +14,37 @@ class QuizLevelsScreen extends StatelessWidget {
     Quiz(title: 'Quiz hiszpański B1', description: 'Quiz hiszpański B1', category: 'Słownictwo', language: 2, level: 1),
     Quiz(title: 'Quiz hiszpański B2', description: 'Quiz hiszpański B2', category: 'Słownictwo', language: 2, level: 2),
     Quiz(title: 'Quiz hiszpański C1', description: 'Quiz hiszpański C1', category: 'Słownictwo', language: 2, level: 3),
-    // Dodaj więcej quizów...
   ];
 
   @override
   Widget build(BuildContext context) {
+    final fontSizeProvider = Provider.of<FontSizeProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Quiz Levels'),
+        title: Text(
+          'Quiz Levels',
+          style: TextStyle(fontSize: fontSizeProvider.fontSize),
+        ),
       ),
       body: ListView.builder(
         itemCount: quizzes.length,
         itemBuilder: (context, index) {
           final quiz = quizzes[index];
           return ListTile(
-            title: Text(quiz.title),
-            subtitle: Text(quiz.description),
+            title: Text(
+              quiz.title,
+              style: TextStyle(fontSize: fontSizeProvider.fontSize),
+            ),
+            subtitle: Text(
+              quiz.description,
+              style: TextStyle(fontSize: fontSizeProvider.fontSize),
+            ),
             onTap: () {
-              // Działanie po kliknięciu na quiz
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => QuizScreen(quiz: quiz), // Przejdź do QuizScreen z wybranym quizem
+                  builder: (context) => QuizScreen(quiz: quiz),
                 ),
               );
             },
