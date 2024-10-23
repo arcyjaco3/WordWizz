@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-// import 'package:icons_plus/icons_plus.dart';
 import 'package:wordwizz/screens/signin_screen.dart';
 import 'package:wordwizz/theme/theme.dart';
 import 'package:wordwizz/widgets/custom_scaffold.dart';
@@ -14,19 +13,22 @@ class SignUpScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpScreen> {
   final _formSignupKey = GlobalKey<FormState>();
   bool agreePersonalData = true;
+
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
       child: Column(
         children: [
+          // Zmniejsz ten flex, aby biały kontener był większy
           const Expanded(
             flex: 1,
             child: SizedBox(
               height: 10,
             ),
           ),
+          // Zwiększ flex, aby kontener biały był bardziej rozciągnięty
           Expanded(
-            flex: 7,
+            flex: 9, // Zmieniono na 9, aby rozciągnąć kontener w dół
             child: Container(
               padding: const EdgeInsets.fromLTRB(25.0, 50.0, 25.0, 20.0),
               decoration: const BoxDecoration(
@@ -37,13 +39,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
               ),
               child: SingleChildScrollView(
-                // get started form
                 child: Form(
                   key: _formSignupKey,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      // get started text
+                      // Tekst nagłówka
                       Text(
                         'Get Started',
                         style: TextStyle(
@@ -55,7 +56,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       const SizedBox(
                         height: 40.0,
                       ),
-                      // full name
+                      // Pole Full Name
                       TextFormField(
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -71,13 +72,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                           border: OutlineInputBorder(
                             borderSide: const BorderSide(
-                              color: Colors.black12, // Default border color
+                              color: Colors.black12,
                             ),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderSide: const BorderSide(
-                              color: Colors.black12, // Default border color
+                              color: Colors.black12,
                             ),
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -86,7 +87,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       const SizedBox(
                         height: 25.0,
                       ),
-                      // email
+                      // Pole Email
                       TextFormField(
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -102,13 +103,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                           border: OutlineInputBorder(
                             borderSide: const BorderSide(
-                              color: Colors.black12, // Default border color
+                              color: Colors.black12,
                             ),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderSide: const BorderSide(
-                              color: Colors.black12, // Default border color
+                              color: Colors.black12,
                             ),
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -117,7 +118,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       const SizedBox(
                         height: 25.0,
                       ),
-                      // password
+                      // Pole Password
                       TextFormField(
                         obscureText: true,
                         obscuringCharacter: '*',
@@ -135,13 +136,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                           border: OutlineInputBorder(
                             borderSide: const BorderSide(
-                              color: Colors.black12, // Default border color
+                              color: Colors.black12,
                             ),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderSide: const BorderSide(
-                              color: Colors.black12, // Default border color
+                              color: Colors.black12,
                             ),
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -150,7 +151,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       const SizedBox(
                         height: 25.0,
                       ),
-                      // i agree to the processing
+                      // Zgoda na przetwarzanie danych
                       Row(
                         children: [
                           Checkbox(
@@ -180,7 +181,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       const SizedBox(
                         height: 25.0,
                       ),
-                      // signup button
+                      // Przycisk rejestracji
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
@@ -206,7 +207,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       const SizedBox(
                         height: 30.0,
                       ),
-                      // sign up divider
+                      // Separator dla logowania przez social media
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -239,20 +240,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       const SizedBox(
                         height: 30.0,
                       ),
-                      // sign up social media logo
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Icon(Icons.facebook),  // Upewnij się, że używasz właściwej ikony
-                          // Icon(Icons.twitter),   // Upewnij się, że używasz właściwej ikony
-                          // Icon(Icons.google),    // Upewnij się, że używasz właściwej ikony
-                          Icon(Icons.apple), 
-                        ],
+                      // Przycisk logowania przez social media
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 50.0), // Odstęp na dole
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Icon(Icons.facebook, size: 30, color: Colors.blue),
+                            Icon(Icons.apple, size: 30, color: Colors.black),
+                          ],
+                        ),
                       ),
                       const SizedBox(
                         height: 25.0,
                       ),
-                      // already have an account
+                      // Tekst "Already have an account?"
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
