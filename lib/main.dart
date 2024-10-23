@@ -1,12 +1,13 @@
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart'; // Importujemy firebase_options
+import 'firebase_options.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'providers/theme_provider.dart';
-import 'providers/font_size_provider.dart';
+import 'package:wordwizz/providers/theme_provider.dart';
+import 'package:wordwizz/providers/font_size_provider.dart';
+import 'package:wordwizz/providers/auth_provider.dart'; // Dodajemy AuthProvider
 
-import 'screens/welcome_screen.dart';
+import 'package:wordwizz/screens/welcome_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,6 +22,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => FontSizeProvider()),
+        ChangeNotifierProvider(create: (_) => AuthProvider()), // AuthProvider do MultiProvider
       ],
       child: const MyApp(),
     ),
@@ -39,7 +41,7 @@ class MyApp extends StatelessWidget {
       themeMode: themeProvider.themeMode,
       theme: ThemeData.light(),
       darkTheme: ThemeData.dark(),
-      home: WelcomeScreen(),
+      home: WelcomeScreen(), // Można zmienić na inny ekran początkowy
     );
   }
 }

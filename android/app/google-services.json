@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "934484124693",
+    "project_id": "wordwizz-e114b",
+    "storage_bucket": "wordwizz-e114b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:934484124693:android:fd994285f1b9d9ce44da1c",
+        "android_client_info": {
+          "package_name": "com.example.wordwizz"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "934484124693-m9peniuirig6rk55nf8482fltffejk1n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCbStAiV6UDY3eO6zf5zMDnLwHaycEMXRw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "934484124693-m9peniuirig6rk55nf8482fltffejk1n.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "934484124693-cooqdaa8ad0snqkpqakc7430a4sosn0e.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.wordwizz"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

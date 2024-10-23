@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart'; // Dodajemy provider
+import 'package:wordwizz/providers/auth_provider.dart'; // Importujemy AuthProvider
 import 'package:wordwizz/screens/signin_screen.dart';
 import 'package:wordwizz/theme/theme.dart';
 import 'package:wordwizz/widgets/custom_scaffold.dart';
@@ -12,7 +14,43 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   final _formSignupKey = GlobalKey<FormState>();
+  String? _fullName;
+  String? _email;
+  String? _password;
   bool agreePersonalData = true;
+
+  // Funkcja rejestracji
+  Future<void> _signUpUser() async {
+    if (_formSignupKey.currentState!.validate() && agreePersonalData) {
+      _formSignupKey.currentState!.save();
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+
+      try {
+        final user = await authProvider.signUpWithEmailAndPassword(_email!, _password!);
+
+        if (user != null) {
+          // Jeśli rejestracja się powiedzie, wyświetlamy wiadomość i przekierowujemy do ekranu logowania
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Zarejestrowano pomyślnie!')),
+          );
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const SignInScreen()),
+          );
+        }
+      } catch (e) {
+        // Jeśli wystąpił błąd, wyświetlamy wiadomość o błędzie
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Błąd rejestracji: $e')),
+        );
+      }
+    } else if (!agreePersonalData) {
+      // Jeśli użytkownik nie zgodził się na przetwarzanie danych
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please agree to the processing of personal data')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +102,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           }
                           return null;
                         },
+                        onSaved: (value) => _fullName = value,
                         decoration: InputDecoration(
                           label: const Text('Full Name'),
                           hintText: 'Enter Full Name',
@@ -95,6 +134,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           }
                           return null;
                         },
+                        onSaved: (value) => _email = value,
                         decoration: InputDecoration(
                           label: const Text('Email'),
                           hintText: 'Enter Email',
@@ -128,6 +168,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           }
                           return null;
                         },
+                        onSaved: (value) => _password = value,
                         decoration: InputDecoration(
                           label: const Text('Password'),
                           hintText: 'Enter Password',
@@ -185,22 +226,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: () {
-                            if (_formSignupKey.currentState!.validate() &&
-                                agreePersonalData) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Processing Data'),
-                                ),
-                              );
-                            } else if (!agreePersonalData) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text(
-                                        'Please agree to the processing of personal data')),
-                              );
-                            }
-                          },
+                          onPressed: _signUpUser, // Wywołanie rejestracji
                           child: const Text('Sign up'),
                         ),
                       ),
@@ -284,8 +310,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ],
                       ),
                       const SizedBox(
-                        height: 20.0,
-                      ),
+                        height: 20.0),
                     ],
                   ),
                 ),
