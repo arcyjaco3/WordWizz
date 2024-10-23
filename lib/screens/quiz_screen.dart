@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:wordwizz/models/quiz_model.dart';
 import 'package:wordwizz/components/database_helper.dart';
 import 'package:wordwizz/models/question_model.dart';
+import 'package:wordwizz/models/fill_the_gap_question.dart';
 import '../providers/font_size_provider.dart';
 
 class QuizScreen extends StatefulWidget {
@@ -17,11 +18,15 @@ class QuizScreen extends StatefulWidget {
 
 class _QuizScreenState extends State<QuizScreen> {
   late Future<bool> futureDatabaseExists;
-  late Future<List<Question>> futureQuestions;
-  Map<int, int?> selectedAnswers = {};
+  late Future<List<dynamic>> futureQuestions;
+  Map<int, dynamic> selectedAnswers = {};
   int currentQuestionIndex = 0;
   int score = 0;
-  List<Question> loadedQuestions = [];
+  List<dynamic> loadedQuestions = [];
+  bool? isCorrectAnswer;
+  bool showNextButton = false;
+  bool isAnswerSubmitted = false;
+  final TextEditingController answerController = TextEditingController();
 
   @override
   void initState() {
@@ -31,27 +36,35 @@ class _QuizScreenState extends State<QuizScreen> {
     futureQuestions = getQuestionsForQuiz();
   }
 
-  Future<List<Question>> getQuestionsForQuiz() async {
+  Future<List<dynamic>> getQuestionsForQuiz() async {
     try {
       final db = await DatabaseHelper().database;
       String language = widget.quiz.language.toString();
       String level = widget.quiz.level.toString();
 
-      final result = await db.rawQuery(
-        'SELECT * FROM TEST_QUESTIONS WHERE question_language = ? AND question_level = ? ORDER BY RANDOM() LIMIT 10',
+      final multipleChoiceResult = await db.rawQuery(
+        'SELECT * FROM TEST_QUESTIONS WHERE question_language = ? AND question_level = ? ORDER BY RANDOM() LIMIT 5',
         [language, level],
       );
 
-      List<Question> questions = [];
-      for (var questionMap in result) {
+      final fillGapResult = await db.rawQuery(
+        'SELECT * FROM FILL_THE_GAP WHERE ftg_language = ? AND ftg_level = ? ORDER BY RANDOM() LIMIT 5',
+        [language, level],
+      );
+
+      List<dynamic> questions = [];
+
+      for (var questionMap in multipleChoiceResult) {
         final answerMaps = await db.rawQuery(
           'SELECT * FROM TEST_ANSWERS WHERE question_id = ?',
           [questionMap['question_id']],
         );
-
         List<Answer> answers = answerMaps.map((map) => Answer.fromMap(map)).toList();
-        Question question = Question.fromMap(questionMap, answers);
-        questions.add(question);
+        questions.add(Question.fromMap(questionMap, answers));
+      }
+
+      for (var gapMap in fillGapResult) {
+        questions.add(FillTheGapQuestion.fromMap(gapMap));
       }
 
       loadedQuestions = questions;
@@ -61,9 +74,11 @@ class _QuizScreenState extends State<QuizScreen> {
     }
   }
 
-  void selectAnswer(int questionId, int answerId) {
+  void selectAnswer(int questionId, dynamic answer) {
     setState(() {
-      selectedAnswers[questionId] = answerId;
+      if (!selectedAnswers.containsKey(questionId)) {
+        selectedAnswers[questionId] = answer;
+      }
     });
   }
 
@@ -73,18 +88,45 @@ class _QuizScreenState extends State<QuizScreen> {
     return answer.isCorrect;
   }
 
+  void checkFillGapAnswer(FillTheGapQuestion question) {
+    String? userAnswer = selectedAnswers[question.id];
+    if (userAnswer == null || userAnswer.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please enter an answer before submitting.')),
+      );
+      return;
+    }
+
+    setState(() {
+      if (userAnswer.toLowerCase().trim() == question.correctAnswer.toLowerCase().trim()) {
+        if (isCorrectAnswer == null) {
+          score++;
+        }
+        isCorrectAnswer = true;
+      } else {
+        isCorrectAnswer = false;
+      }
+      showNextButton = true;
+      isAnswerSubmitted = true;
+    });
+  }
+
   void nextQuestion() {
     setState(() {
-      if (selectedAnswers.containsKey(loadedQuestions[currentQuestionIndex].id)) {
-        int questionId = loadedQuestions[currentQuestionIndex].id;
-        int? selectedAnswerId = selectedAnswers[questionId];
-
-        if (selectedAnswerId != null && isAnswerCorrect(questionId, selectedAnswerId)) {
+      final currentQuestion = loadedQuestions[currentQuestionIndex];
+      if (currentQuestion is Question) {
+        int? selectedAnswerId = selectedAnswers[currentQuestion.id];
+        if (selectedAnswerId != null && isAnswerCorrect(currentQuestion.id, selectedAnswerId)) {
           score++;
         }
       }
 
-      if (currentQuestionIndex < 9) {
+      showNextButton = false;
+      isCorrectAnswer = null;
+      isAnswerSubmitted = false;
+      answerController.clear();
+
+      if (currentQuestionIndex < loadedQuestions.length - 1) {
         currentQuestionIndex++;
       } else {
         Navigator.pushReplacement(
@@ -118,7 +160,7 @@ class _QuizScreenState extends State<QuizScreen> {
           } else if (snapshot.hasData && snapshot.data == false) {
             return Center(child: Text('Database file not found in assets.'));
           } else {
-            return FutureBuilder<List<Question>>(
+            return FutureBuilder<List<dynamic>>(
               future: futureQuestions,
               builder: (context, questionSnapshot) {
                 if (questionSnapshot.connectionState == ConnectionState.waiting) {
@@ -126,76 +168,143 @@ class _QuizScreenState extends State<QuizScreen> {
                 } else if (questionSnapshot.hasError) {
                   return Center(child: Text('Error reading database: ${questionSnapshot.error}'));
                 } else if (questionSnapshot.hasData && questionSnapshot.data!.isNotEmpty) {
-                  final questions = questionSnapshot.data!;
-                  final question = questions[currentQuestionIndex];
-                  return Card(
-                    margin: EdgeInsets.all(10.0),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Question ${currentQuestionIndex + 1} of 10',
-                            style: TextStyle(
-                              fontSize: fontSizeProvider.fontSize,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: 10),
-                          Text(
-                            question.questionText,
-                            style: TextStyle(
-                              fontSize: fontSizeProvider.fontSize + 2,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(height: 10),
-                          ...question.answers.map((answer) {
-                            bool isSelected = selectedAnswers[question.id] == answer.id;
-                            bool isCorrect = answer.isCorrect;
-
-                            Color? answerColor = isSelected
-                                ? (isCorrect ? Colors.green : Colors.red)
-                                : null;
-
-                            return ListTile(
-                              title: Text(
-                                answer.answerText,
-                                style: TextStyle(
-                                  color: answerColor,
-                                  fontSize: fontSizeProvider.fontSize,
-                                ),
-                              ),
-                              leading: Icon(
-                                isSelected
-                                    ? (isCorrect ? Icons.check_circle : Icons.cancel)
-                                    : Icons.radio_button_unchecked,
-                                color: isSelected ? (isCorrect ? Colors.green : Colors.red) : null,
-                              ),
-                              onTap: () => selectAnswer(question.id, answer.id),
-                            );
-                          }).toList(),
-                          SizedBox(height: 10),
-                          if (selectedAnswers.containsKey(question.id))
-                            ElevatedButton(
-                              onPressed: () => nextQuestion(),
-                              child: Text(
-                                'Next Question',
-                                style: TextStyle(fontSize: fontSizeProvider.fontSize),
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                  );
+                  final question = questionSnapshot.data![currentQuestionIndex];
+                  
+                  if (question is Question) {
+                    return buildMultipleChoiceQuestion(question, fontSizeProvider);
+                  } else if (question is FillTheGapQuestion) {
+                    return buildFillTheGapQuestion(question, fontSizeProvider);
+                  }
                 } else {
                   return Center(child: Text('No questions available for this quiz.'));
                 }
+                return Container();
               },
             );
           }
         },
+      ),
+    );
+  }
+
+  Widget buildMultipleChoiceQuestion(Question question, FontSizeProvider fontSizeProvider) {
+    return Card(
+      margin: EdgeInsets.all(10.0),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Question ${currentQuestionIndex + 1} of ${loadedQuestions.length}',
+              style: TextStyle(
+                fontSize: fontSizeProvider.fontSize,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 10),
+            Text(
+              question.questionText,
+              style: TextStyle(
+                fontSize: fontSizeProvider.fontSize + 2,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 10),
+            ...question.answers.map((answer) {
+              bool isSelected = selectedAnswers[question.id] == answer.id;
+              bool isCorrect = answer.isCorrect;
+
+              Color? answerColor = isSelected
+                  ? (isCorrect ? Colors.green : Colors.red)
+                  : null;
+
+              return ListTile(
+                title: Text(
+                  answer.answerText,
+                  style: TextStyle(
+                    color: answerColor,
+                    fontSize: fontSizeProvider.fontSize,
+                  ),
+                ),
+                leading: Icon(
+                  isSelected
+                      ? (isCorrect ? Icons.check_circle : Icons.cancel)
+                      : Icons.radio_button_unchecked,
+                  color: isSelected ? (isCorrect ? Colors.green : Colors.red) : null,
+                ),
+                onTap: () => selectAnswer(question.id, answer.id),
+              );
+            }).toList(),
+            SizedBox(height: 10),
+            if (selectedAnswers.containsKey(question.id))
+              ElevatedButton(
+                onPressed: () => nextQuestion(),
+                child: Text(
+                  'Next Question',
+                  style: TextStyle(fontSize: fontSizeProvider.fontSize),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildFillTheGapQuestion(FillTheGapQuestion question, FontSizeProvider fontSizeProvider) {
+    return Card(
+      margin: EdgeInsets.all(10.0),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Question ${currentQuestionIndex + 1} of ${loadedQuestions.length}',
+              style: TextStyle(
+                fontSize: fontSizeProvider.fontSize,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 10),
+            Text(
+              question.questionText,
+              style: TextStyle(
+                fontSize: fontSizeProvider.fontSize + 2,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(height: 10),
+            TextField(
+              controller: answerController,
+              onChanged: (value) => selectedAnswers[question.id] = value,
+              decoration: InputDecoration(labelText: 'Enter the missing word'),
+              enabled: !isAnswerSubmitted,
+            ),
+            if (isCorrectAnswer != null) 
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Text(
+                  isCorrectAnswer! ? 'Correct!' : 'Incorrect.',
+                  style: TextStyle(
+                    color: isCorrectAnswer! ? Colors.green : Colors.red,
+                    fontSize: fontSizeProvider.fontSize,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: showNextButton
+                  ? () => nextQuestion()
+                  : () => checkFillGapAnswer(question),
+              child: Text(
+                showNextButton ? 'Next Question' : 'Submit Answer',
+                style: TextStyle(fontSize: fontSizeProvider.fontSize),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
