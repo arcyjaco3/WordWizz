@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'providers/theme_provider.dart';
 import 'providers/font_size_provider.dart';
-import 'package:wordwizz/components/navigation_menu.dart';
+// import 'package:wordwizz/components/navigation_menu.dart';
 
 
-import 'screens/welcome_screen.dart';
+import 'package:wordwizz/screens/welcome_screen.dart';
 
-void main() {
+void main() async{
+
+
+
   runApp(
     MultiProvider(
       providers: [
