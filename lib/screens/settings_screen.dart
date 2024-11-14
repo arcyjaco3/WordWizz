@@ -12,7 +12,7 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   String _selectedLanguage = 'English';
-  String _selectedFontSize = 'medium'; 
+  String _selectedFontSize = 'Medium';
 
   final Map<String, double> fontSizeMap = {
     'small': 12.0,
@@ -21,16 +21,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
   };
 
   @override
+  void initState() {
+    super.initState();
+    final fontSizeProvider = Provider.of<FontSizeProvider>(context, listen: false);
+    if (fontSizeProvider.fontSize == fontSizeMap['small']) {
+      _selectedFontSize = 'small';
+    } else if (fontSizeProvider.fontSize == fontSizeMap['medium']) {
+      _selectedFontSize = 'medium';
+    } else if (fontSizeProvider.fontSize == fontSizeMap['large']) {
+      _selectedFontSize = 'large';
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final fontSizeProvider = Provider.of<FontSizeProvider>(context);
- // Poprawne uzyskanie instancji
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
           'Ustawienia',
-          style: TextStyle(fontSize: fontSizeProvider.fontSize), // Dynamiczny rozmiar tytułu
+          style: TextStyle(fontSize: fontSizeProvider.fontSize),
         ),
       ),
       body: Padding(
@@ -38,9 +50,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Wybór trybu motywu
             ListTile(
-              title: const Text('Tryb motywu'),
+              title: Text(
+                'Tryb motywu',
+                style: TextStyle(fontSize: fontSizeProvider.fontSize),
+              ),
               trailing: DropdownButton<ThemeMode>(
                 value: themeProvider.themeMode,
                 onChanged: (ThemeMode? newValue) {
@@ -51,24 +65,32 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 items: const [
                   DropdownMenuItem(
                     value: ThemeMode.system,
-                    child: Text('Systemowy'
-                    ), // Brak dynamicznej czcionki tutaj
+                    child: Text('Systemowy'),
                   ),
                   DropdownMenuItem(
                     value: ThemeMode.light,
-                    child: Text('Jasny'), // Brak dynamicznej czcionki tutaj
+                    child: Text('Jasny'),
                   ),
                   DropdownMenuItem(
                     value: ThemeMode.dark,
-                    child: Text('Ciemny'), // Brak dynamicznej czcionki tutaj
+                    child: Text('Ciemny'),
                   ),
-                ],
+                ].map((DropdownMenuItem<ThemeMode> item) {
+                  return DropdownMenuItem<ThemeMode>(
+                    value: item.value,
+                    child: Text(
+                      (item.child as Text).data!,
+                      style: TextStyle(fontSize: fontSizeProvider.fontSize),
+                    ),
+                  );
+                }).toList(),
               ),
             ),
-
-            // Zmiana języka
             ListTile(
-              title: const Text('Język'),
+              title: Text(
+                'Język',
+                style: TextStyle(fontSize: fontSizeProvider.fontSize),
+              ),
               trailing: DropdownButton<String>(
                 value: _selectedLanguage,
                 onChanged: (String? newValue) {
@@ -80,36 +102,44 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
-                    child: Text(value),
+                    child: Text(
+                      value,
+                      style: TextStyle(fontSize: fontSizeProvider.fontSize),
+                    ),
                   );
                 }).toList(),
               ),
             ),
-
-            // Zmiana rozmiaru czcionki (z przypisanymi wartościami)
             ListTile(
-              title: const Text('Rozmiar Czcionki'),
+              title: Text(
+                'Rozmiar Czcionki',
+                style: TextStyle(fontSize: fontSizeProvider.fontSize),
+              ),
               trailing: DropdownButton<String>(
                 value: _selectedFontSize,
                 onChanged: (String? newValue) {
                   setState(() {
                     _selectedFontSize = newValue!;
-                    fontSizeProvider.setFontSize(fontSizeMap[_selectedFontSize]!); // Aktualizacja FontSizeProvider
+                    fontSizeProvider.setFontSize(fontSizeMap[_selectedFontSize]!);
                   });
                 },
                 items: fontSizeMap.keys
                     .map<DropdownMenuItem<String>>((String key) {
                   return DropdownMenuItem<String>(
                     value: key,
-                    child: Text(key), // Wyświetl nazwy: small, medium, large
+                    child: Text(
+                      key,
+                      style: TextStyle(fontSize: fontSizeProvider.fontSize),
+                    ),
                   );
                 }).toList(),
               ),
             ),
-
-            // Włączenie/wyłączenie powiadomień
             ListTile(
-              title: const Text('Powiadomienia'),
+              title: Text(
+                'Powiadomienia',
+                style: TextStyle(fontSize: fontSizeProvider.fontSize),
+              ),
               trailing: Switch(
                 value: true,
                 onChanged: (bool value) {},

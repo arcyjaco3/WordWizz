@@ -5,6 +5,7 @@ import 'package:wordwizz/theme/theme.dart';
 import 'package:wordwizz/widgets/custom_scaffold.dart';
 import 'package:wordwizz/widgets/welcome_button.dart';
 
+
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
 

@@ -5,14 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wordwizz/providers/theme_provider.dart';
 import 'package:wordwizz/providers/font_size_provider.dart';
-import 'package:wordwizz/providers/auth_provider.dart'; // Dodajemy AuthProvider
+import 'package:wordwizz/providers/auth_provider.dart'; 
 
 import 'package:wordwizz/screens/welcome_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Inicjalizujemy Firebase z użyciem firebase_options
+  // Inicjalizuje Firebase z użyciem firebase_options
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -45,3 +45,4 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+ 

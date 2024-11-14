@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:wordwizz/components/navigation_menu.dart'; //  komponent nawigacji
 
 class HomeScreen extends StatelessWidget {
   final User? user;
@@ -13,8 +14,13 @@ class HomeScreen extends StatelessWidget {
         title: const Text('Home Screen'),
       ),
       body: Center(
-        child: Text('Witaj ${user?.email}!'),
+        child: Text(
+          'Witaj ${user?.email}!',
+          style: const TextStyle(fontSize: 20),
+        ),
       ),
+
+      bottomNavigationBar: BottomNavigationBarScreen(),
     );
   }
 }
