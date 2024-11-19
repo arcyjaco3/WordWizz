@@ -20,6 +20,10 @@ dependencies:
   sqflite: ^2.2.7
   sqflite_common_ffi: ^2.0.0
   path: ^1.8.3
+  # 
+  shared_preferences: ^2.3.3
+  easy_localization: ^3.0.7
+  # 
 
 dev_dependencies:
   flutter_test:
@@ -32,3 +36,5 @@ flutter:
   assets:
     - assets/images/  
     - assets/data/database.db
+    # 
+    - assets/lang/

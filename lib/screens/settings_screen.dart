@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:provider/provider.dart';
 import '../providers/theme_provider.dart';
 import '../providers/font_size_provider.dart';
@@ -7,31 +8,15 @@ class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 
   @override
-  _SettingsScreenState createState() => _SettingsScreenState();
+  SettingsScreenState createState() => SettingsScreenState();
 }
 
-class _SettingsScreenState extends State<SettingsScreen> {
-  String _selectedLanguage = 'English';
-  String _selectedFontSize = 'Medium';
-
+class SettingsScreenState extends State<SettingsScreen> {
   final Map<String, double> fontSizeMap = {
     'small': 12.0,
     'medium': 16.0,
     'large': 20.0,
   };
-
-  @override
-  void initState() {
-    super.initState();
-    final fontSizeProvider = Provider.of<FontSizeProvider>(context, listen: false);
-    if (fontSizeProvider.fontSize == fontSizeMap['small']) {
-      _selectedFontSize = 'small';
-    } else if (fontSizeProvider.fontSize == fontSizeMap['medium']) {
-      _selectedFontSize = 'medium';
-    } else if (fontSizeProvider.fontSize == fontSizeMap['large']) {
-      _selectedFontSize = 'large';
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,21 +25,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Ustawienia',
-          style: TextStyle(fontSize: fontSizeProvider.fontSize),
-        ),
+        title: Text('settings.title'.tr()), // Tytuł z tłumaczenia
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Sekcja: Tryb motywu
             ListTile(
-              title: Text(
-                'Tryb motywu',
-                style: TextStyle(fontSize: fontSizeProvider.fontSize),
-              ),
+              title: Text('settings.theme_mode'.tr()),
               trailing: DropdownButton<ThemeMode>(
                 value: themeProvider.themeMode,
                 onChanged: (ThemeMode? newValue) {
@@ -62,87 +42,81 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     themeProvider.toggleTheme(newValue);
                   }
                 },
-                items: const [
+                items: [
                   DropdownMenuItem(
                     value: ThemeMode.system,
-                    child: Text('Systemowy'),
+                    child: Text('settings.theme.system'.tr()),
                   ),
                   DropdownMenuItem(
                     value: ThemeMode.light,
-                    child: Text('Jasny'),
+                    child: Text('settings.theme.light'.tr()),
                   ),
                   DropdownMenuItem(
                     value: ThemeMode.dark,
-                    child: Text('Ciemny'),
+                    child: Text('settings.theme.dark'.tr()),
                   ),
-                ].map((DropdownMenuItem<ThemeMode> item) {
-                  return DropdownMenuItem<ThemeMode>(
-                    value: item.value,
+                ],
+              ),
+            ),
+
+            // Sekcja: Język
+            ListTile(
+              title: Text('settings.language'.tr()),
+              trailing: DropdownButton<Locale>(
+                value: context.locale,
+                onChanged: (Locale? newLocale) {
+                  if (newLocale != null) {
+                    context.setLocale(newLocale);
+                  }
+                },
+                items: context.supportedLocales.map((locale) {
+                  return DropdownMenuItem<Locale>(
+                    value: locale,
                     child: Text(
-                      (item.child as Text).data!,
-                      style: TextStyle(fontSize: fontSizeProvider.fontSize),
+                      locale.languageCode == 'en'
+                          ? 'English'
+                          : locale.languageCode == 'pl'
+                              ? 'Polski'
+                              : 'Español',
                     ),
                   );
                 }).toList(),
               ),
             ),
+
+            // Sekcja: Rozmiar czcionki
             ListTile(
-              title: Text(
-                'Język',
-                style: TextStyle(fontSize: fontSizeProvider.fontSize),
-              ),
+              title: Text('settings.font_size'.tr()),
               trailing: DropdownButton<String>(
-                value: _selectedLanguage,
+                value: fontSizeMap.keys.firstWhere(
+                  (key) => fontSizeMap[key] == fontSizeProvider.fontSize,
+                  orElse: () => 'medium', // Domyślnie "medium"
+                ),
                 onChanged: (String? newValue) {
-                  setState(() {
-                    _selectedLanguage = newValue!;
-                  });
+                  if (newValue != null) {
+                    fontSizeProvider.setFontSize(fontSizeMap[newValue]!);
+                  }
                 },
-                items: <String>['Polski', 'English', 'Español']
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(
-                      value,
-                      style: TextStyle(fontSize: fontSizeProvider.fontSize),
-                    ),
-                  );
-                }).toList(),
-              ),
-            ),
-            ListTile(
-              title: Text(
-                'Rozmiar Czcionki',
-                style: TextStyle(fontSize: fontSizeProvider.fontSize),
-              ),
-              trailing: DropdownButton<String>(
-                value: _selectedFontSize,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    _selectedFontSize = newValue!;
-                    fontSizeProvider.setFontSize(fontSizeMap[_selectedFontSize]!);
-                  });
-                },
-                items: fontSizeMap.keys
-                    .map<DropdownMenuItem<String>>((String key) {
+                items: fontSizeMap.keys.map((String key) {
                   return DropdownMenuItem<String>(
                     value: key,
                     child: Text(
-                      key,
-                      style: TextStyle(fontSize: fontSizeProvider.fontSize),
+                      'settings.font_size.$key'.tr(),
                     ),
                   );
                 }).toList(),
               ),
             ),
+
+            // Sekcja: Powiadomienia (przykład)
             ListTile(
-              title: Text(
-                'Powiadomienia',
-                style: TextStyle(fontSize: fontSizeProvider.fontSize),
-              ),
+              title: Text('settings.notifications'.tr()),
               trailing: Switch(
-                value: true,
-                onChanged: (bool value) {},
+                value: true, // Placeholder
+                onChanged: (bool value) {
+                  // Obsługa przełącznika
+                  print('Notifications toggled: $value');
+                },
               ),
             ),
           ],

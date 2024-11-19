@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:wordwizz/screens/settings_screen.dart';
 import 'package:wordwizz/screens/course_screen.dart';
 import 'package:wordwizz/screens/quiz_level_screen.dart'; 
@@ -36,22 +37,22 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
+        items:  <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
-            label: 'Home',
+             label: 'navigation.home'.tr(),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.checklist),
-            label: 'Courses',
+            label: 'navigation.courses'.tr(),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.school),
-            label: 'Quizzes',
+            label: 'navigation.quizzes'.tr(),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
-            label: 'Settings',
+            label: 'navigation.settings'.tr(),
           ),
         ],
         currentIndex: _selectedIndex,
