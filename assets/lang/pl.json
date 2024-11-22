@@ -1,0 +1,24 @@
+{
+    "settings": {
+      "title": "Ustawienia",
+      "theme_mode": "Tryb Motywu",
+      "theme": {
+        "system": "Systemowy",
+        "light": "Jasny",
+        "dark": "Ciemny"
+      },
+      "language": "Język",
+      "font_size": "Rozmiar Czcionki",
+      "font_size.small": "Mały",
+      "font_size.medium": "Średni",
+      "font_size.large": "Duży",
+      "notifications": "Powiadomienia"
+    },
+    "navigation": {
+    "home": "Strona główna",
+    "courses": "Kursy",
+    "quizzes": "Quizy",
+    "settings": "Ustawienia"
+  }
+  }
+  

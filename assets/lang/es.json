@@ -1,0 +1,28 @@
+{
+    "settings": {
+      "title": "Configuración",
+      "theme_mode": "Modo de Tema",
+      "theme": {
+        "system": "Sistema",
+        "light": "Claro",
+        "dark": "Oscuro"
+      },
+      "language": "Idioma",
+      "font_size": "Tamaño de Fuente",
+      "font_size.small": "Pequeño",
+      "font_size.medium": "Mediano",
+      "font_size.large": "Grande",
+      "notifications": "Notificaciones"
+    },
+    "welcome": {
+      "title": "Bienvenido a WordWizz",
+      "subtitle": "Tu aplicación definitiva para aprender idiomas"
+    },
+    "navigation": {
+      "home": "Inicio",
+      "courses": "Cursos",
+      "quizzes": "Cuestionarios",
+      "settings": "Configuración"
+    }
+  }
+  

@@ -1,0 +1,24 @@
+{
+    "settings": {
+      "title": "Settings",
+      "theme_mode": "Theme Mode",
+      "theme": {
+        "system": "System",
+        "light": "Light",
+        "dark": "Dark"
+      },
+      "language": "Language",
+      "font_size": "Font Size",
+      "font_size.small": "Small",
+      "font_size.medium": "Medium",
+      "font_size.large": "Large",
+      "notifications": "Notifications"
+    },
+    "navigation": {
+    "home": "Home",
+    "courses": "Courses",
+    "quizzes": "Quizzes",
+    "settings": "Settings"
+  }
+  }
+  
